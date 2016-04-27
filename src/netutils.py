@@ -16,11 +16,15 @@ class CVTrainSplit(object):
 
 
 class RotateBatchIterator(BatchIterator):
-    def __init__(self, *args, max_angle=20, **kwargs):
+    def __init__(self, *args, max_angle=20, rotate_prob=1., **kwargs):
         self.max_angle = max_angle
+        self.rotate_prob = rotate_prob
         super(RotateBatchIterator, self).__init__(*args, **kwargs)
 
     def transform(self, X, y):
+        if np.random.rand() > self.rotate_prob:
+            return X, y
+
         angle = (np.random.rand() - 0.5) * 2 * self.max_angle
         X_new = np.zeros_like(X)
         for i, x in enumerate(X):
